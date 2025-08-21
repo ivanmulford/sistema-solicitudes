@@ -1,0 +1,27 @@
+
+<h2>Panel de Administración</h2>
+<form method="post">
+  Nombre: <input name="nombre">
+  Estado: <select name="estado">
+    <option value="">Todos</option>
+    <option value="pendiente">Pendiente</option>
+    <option value="aprobada">Aprobada</option>
+    <option value="rechazada">Rechazada</option>
+  </select>
+  <button type="submit">Filtrar</button>
+</form>
+<table border="1">
+<tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Estado</th><th>Acciones</th></tr>
+{% for s in solicitudes %}
+<tr>
+  <td>{{s.id}}</td>
+  <td>{{s.nombre}}</td>
+  <td>{{s.descripcion}}</td>
+  <td>{{s.estado}}</td>
+  <td>
+    <a href="/cambiar_estado/{{s.id}}/aprobada">Aprobar</a> |
+    <a href="/cambiar_estado/{{s.id}}/rechazada">Rechazar</a>
+  </td>
+</tr>
+{% endfor %}
+</table>
