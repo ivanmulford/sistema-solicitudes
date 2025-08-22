@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Usuario</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-4">
+    <h2>Editar Usuario</h2>
+    <form method="post">
+        <div class="mb-3">
+            <label for="nombre_usuario" class="form-label">Nombre de Usuario</label>
+            <input type="text" class="form-control" id="nombre_usuario" name="nombre_usuario" value="{{ usuario.nombre_usuario }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="rol" class="form-label">Rol</label>
+            <select class="form-select" id="rol" name="rol" required>
+                <option value="solicitante" {% if usuario.rol == "solicitante" %}selected{% endif %}>Solicitante</option>
+                <option value="aprobador" {% if usuario.rol == "aprobador" %}selected{% endif %}>Aprobador</option>
+                <option value="administrador" {% if usuario.rol == "administrador" %}selected{% endif %}>Administrador</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success">Guardar Cambios</button>
+        <a href="/admin/usuarios" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+</body>
+</html>
