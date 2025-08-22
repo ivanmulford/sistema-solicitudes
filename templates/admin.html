@@ -1,27 +1,95 @@
+{% extends "base.html" %}
 
-<h2>Panel de Administración</h2>
-<form method="post">
-  Nombre: <input name="nombre">
-  Estado: <select name="estado">
-    <option value="">Todos</option>
-    <option value="pendiente">Pendiente</option>
-    <option value="aprobada">Aprobada</option>
-    <option value="rechazada">Rechazada</option>
-  </select>
-  <button type="submit">Filtrar</button>
-</form>
-<table border="1">
-<tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Estado</th><th>Acciones</th></tr>
-{% for s in solicitudes %}
-<tr>
-  <td>{{s.id}}</td>
-  <td>{{s.nombre}}</td>
-  <td>{{s.descripcion}}</td>
-  <td>{{s.estado}}</td>
-  <td>
-    <a href="/cambiar_estado/{{s.id}}/aprobada">Aprobar</a> |
-    <a href="/cambiar_estado/{{s.id}}/rechazada">Rechazar</a>
-  </td>
-</tr>
-{% endfor %}
-</table>
+{% block title %}Dashboard Administrativo - Sistema de Solicitudes{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="fade-in mb-4">
+            <i class="fas fa-tachometer-alt me-3 text-primary"></i>Dashboard Administrativo
+        </h2>
+
+        <!-- Estadísticas -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card text-white bg-warning h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-clock fa-2x mb-2"></i>
+                        <h3>{{ stats.pendientes }}</h3>
+                        <small>Pendientes</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-white bg-success h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-check-circle fa-2x mb-2"></i>
+                        <h3>{{ stats.aprobadas }}</h3>
+                        <small>Aprobadas</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-white bg-danger h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-times-circle fa-2x mb-2"></i>
+                        <h3>{{ stats.rechazadas }}</h3>
+                        <small>Rechazadas</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-white bg-info h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-dollar-sign fa-2x mb-2"></i>
+                        <h4>${{ "{:,.0f}".format(stats.monto_aprobado) }}</h4>
+                        <small>Monto Aprobado</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="card mb-4 fade-in">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-filter me-2"></i>Filtros de Búsqueda
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post" id="filterForm">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label for="nombre" class="form-label">Solicitante</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" 
+                                   placeholder="Buscar por nombre..." value="{{ request.form.get('nombre', '') }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="estado" class="form-label">Estado</label>
+                            <select class="form-select" id="estado" name="estado">
+                                <option value="">Todos los estados</option>
+                                <option value="pendiente" {% if request.form.get('estado') == 'pendiente' %}selected{% endif %}>
+                                    Pendiente
+                                </option>
+                                <option value="aprobada" {% if request.form.get('estado') == 'aprobada' %}selected{% endif %}>
+                                    Aprobada
+                                </option>
+                                <option value="rechazada" {% if request.form.get('estado') == 'rechazada' %}selected{% endif %}>
+                                    Rechazada
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="fecha_desde" class="form-label">Desde</label>
+                            <input type="date" class="form-control" id="fecha_desde" name="fecha_desde" 
+                                   value="{{ request.form.get('fecha_desde', '') }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="fecha_hasta" class="form-label">Hasta</label>
+                            <input type="date" class="form-control" id="fecha_hasta" name="fecha_hasta" 
+                                   value="{{ request.form.get('fecha_hasta', '') }}">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <button type
