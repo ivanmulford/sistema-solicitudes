@@ -8,27 +8,69 @@
 <body class="bg-light">
 <div class="container mt-4">
     <h2>Formulario de Solicitud de Compra</h2>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         <div class="row">
             <div class="col-md-4 mb-3"><label>Sede</label><input name="sede" class="form-control" required></div>
             <div class="col-md-4 mb-3"><label>Fecha</label><input name="fecha" type="date" class="form-control" required></div>
             <div class="col-md-4 mb-3"><label>Proceso</label><input name="proceso" class="form-control" required></div>
         </div>
-        <div class="mb-3"><label>Descripción</label><textarea name="descripcion" class="form-control" required></textarea></div>
+        <hr>
+        <h4>Artículos</h4>
+        <div id="articulos-container"></div>
+        <button type="button" class="btn btn-primary mb-3" id="add-item">Añadir Artículo</button>
+        <hr>
         <div class="mb-3"><label>Proyecto</label><input name="proyecto" class="form-control" required></div>
         <div class="row">
-            <div class="col-md-4 mb-3"><label>Monto</label><input name="monto" type="number" class="form-control" required></div>
-            <div class="col-md-4 mb-3"><label>Prioridad</label>
+            <div class="col-md-6 mb-3"><label>Prioridad</label>
                 <select name="prioridad" class="form-select">
                     <option>Alta</option><option>Media</option><option>Baja</option>
                 </select>
             </div>
-            <div class="col-md-4 mb-3"><label>Proveedor</label><input name="proveedor" class="form-control"></div>
+            <div class="col-md-6 mb-3"><label>Proveedor</label><input name="proveedor" class="form-control"></div>
         </div>
         <div class="mb-3"><label>Justificación</label><textarea name="justificacion" class="form-control"></textarea></div>
+        <div class="mb-3"><label>Archivos adjuntos (Presupuestos, etc.)</label><input type="file" name="adjuntos[]" class="form-control" multiple></div>
         <button type="submit" class="btn btn-success">Enviar Solicitud</button>
-        <a href="/logout" class="btn btn-secondary">Cerrar sesión</a>
     </form>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const container = document.getElementById("articulos-container");
+        const addButton = document.getElementById("add-item");
+
+        function createItemField() {
+            const itemDiv = document.createElement("div");
+            itemDiv.classList.add("row", "mb-3", "articulo-item");
+            itemDiv.innerHTML = `
+                <div class="col-md-6">
+                    <label>Descripción</label>
+                    <input type="text" name="descripcion_articulo[]" class="form-control" required>
+                </div>
+                <div class="col-md-2">
+                    <label>Cantidad</label>
+                    <input type="number" name="cantidad_articulo[]" class="form-control" required min="1">
+                </div>
+                <div class="col-md-3">
+                    <label>Precio Unitario</label>
+                    <input type="number" name="precio_articulo[]" class="form-control" required step="0.01" min="0">
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="button" class="btn btn-danger remove-item">X</button>
+                </div>
+            `;
+            container.appendChild(itemDiv);
+        }
+
+        addButton.addEventListener("click", createItemField);
+
+        container.addEventListener("click", function(event) {
+            if (event.target.classList.contains("remove-item")) {
+                event.target.closest(".articulo-item").remove();
+            }
+        });
+
+        createItemField();
+    });
+</script>
 </body>
 </html>
