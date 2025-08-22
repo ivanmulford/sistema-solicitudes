@@ -2,228 +2,32 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Sistema de Solicitudes</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .login-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(15px);
-            border-radius: 20px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-            padding: 50px;
-            width: 100%;
-            max-width: 450px;
-            animation: slideUp 0.6s ease-out;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .logo {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .logo i {
-            font-size: 4rem;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .logo h1 {
-            color: #1f2937;
-            font-weight: bold;
-            font-size: 1.8rem;
-            margin-top: 15px;
-        }
-
-        .form-floating {
-            margin-bottom: 25px;
-        }
-
-        .form-control {
-            border: 2px solid #e2e8f0;
-            border-radius: 15px;
-            padding: 20px 15px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.15);
-        }
-
-        .form-floating label {
-            padding: 1rem 0.75rem;
-            color: #64748b;
-        }
-
-        .btn-login {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            border: none;
-            border-radius: 15px;
-            padding: 15px;
-            width: 100%;
-            color: white;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
-        }
-
-        .btn-login:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(37, 99, 235, 0.4);
-            color: white;
-        }
-
-        .demo-credentials {
-            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-            border-radius: 15px;
-            padding: 20px;
-            margin-top: 30px;
-            border-left: 4px solid #2563eb;
-        }
-
-        .demo-credentials h6 {
-            color: #1f2937;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .credential-item {
-            background: white;
-            border-radius: 8px;
-            padding: 10px 15px;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .credential-item:hover {
-            background: #2563eb;
-            color: white;
-        }
-
-        .alert {
-            border: none;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-    </style>
+    <title>Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <div class="login-container">
-        <div class="logo">
-            <i class="fas fa-file-invoice-dollar"></i>
-            <h1>Sistema de Solicitudes</h1>
-            <p class="text-muted">Ingresa tus credenciales para continuar</p>
-        </div>
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
-                        {% if category == 'success' %}
-                            <i class="fas fa-check-circle me-2"></i>
-                        {% elif category == 'error' %}
-                            <i class="fas fa-exclamation-circle me-2"></i>
-                        {% elif category == 'info' %}
-                            <i class="fas fa-info-circle me-2"></i>
-                        {% endif %}
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        <form method="post" id="loginForm">
-            <div class="form-floating">
-                <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Usuario" required>
-                <label for="usuario">
-                    <i class="fas fa-user me-2"></i>Usuario
-                </label>
-            </div>
-
-            <div class="form-floating">
-                <input type="password" class="form-control" id="contrasena" name="contrasena" placeholder="Contraseña" required>
-                <label for="contrasena">
-                    <i class="fas fa-lock me-2"></i>Contraseña
-                </label>
-            </div>
-
-            <button type="submit" class="btn btn-login">
-                <i class="fas fa-sign-in-alt me-2"></i>
-                Iniciar Sesión
-            </button>
-        </form>
-
-        <div class="demo-credentials">
-            <h6><i class="fas fa-key me-2"></i>Credenciales de Prueba</h6>
-            <div class="credential-item" onclick="fillCredentials('admin', 'admin123')">
-                <strong>Administrador:</strong> admin / admin123
-            </div>
-            <div class="credential-item" onclick="fillCredentials('aprobador', 'aprob123')">
-                <strong>Aprobador:</strong> aprobador / aprob123
-            </div>
-            <div class="credential-item" onclick="fillCredentials('solicitante', 'solic123')">
-                <strong>Solicitante:</strong> solicitante / solic123
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-header text-center">Iniciar Sesión</div>
+                <div class="card-body">
+                    {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+                    <form method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Usuario</label>
+                            <input type="text" name="usuario" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña</label>
+                            <input type="password" name="contrasena" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Entrar</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function fillCredentials(username, password) {
-            document.getElementById('usuario').value = username;
-            document.getElementById('contrasena').value = password;
-            
-            // Add visual feedback
-            const form = document.getElementById('loginForm');
-            form.style.transform = 'scale(1.02)';
-            setTimeout(() => {
-                form.style.transform = 'scale(1)';
-            }, 200);
-        }
-
-        // Form submission animation
-        document.getElementById('loginForm').addEventListener('submit', function() {
-            const button = this.querySelector('button[type="submit"]');
-            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Iniciando sesión...';
-            button.disabled = true;
-        });
-
-        // Auto-hide alerts
-        setTimeout(function() {
-            document.querySelectorAll('.alert').forEach(function(alert) {
-                var bsAlert = new bootstrap.Alert(alert);
-                bsAlert.close();
-            });
-        }, 5000);
-    </script>
+</div>
 </body>
 </html>
