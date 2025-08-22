@@ -8,20 +8,22 @@
 <body class="bg-light">
 <div class="container mt-4">
     <h2>Solicitudes de Compra</h2>
+    <a href="/admin/usuarios" class="btn btn-info mb-3">Gestión de Usuarios</a>
+    <a href="/logout" class="btn btn-secondary mb-3">Cerrar sesión</a>
     <form method="get" class="row g-3 mb-3">
         <div class="col-md-4"><input name="nombre" class="form-control" placeholder="Buscar por nombre" value="{{ nombre }}"></div>
         <div class="col-md-4">
             <select name="estado" class="form-select">
                 <option value="">Todos los estados</option>
-                <option value="pendiente" {% if estado=='pendiente' %}selected{% endif %}>Pendiente</option>
-                <option value="aprobada" {% if estado=='aprobada' %}selected{% endif %}>Aprobada</option>
-                <option value="rechazada" {% if estado=='rechazada' %}selected{% endif %}>Rechazada</option>
+                <option value="pendiente" {% if estado=="pendiente" %}selected{% endif %}>Pendiente</option>
+                <option value="aprobada" {% if estado=="aprobada" %}selected{% endif %}>Aprobada</option>
+                <option value="rechazada" {% if estado=="rechazada" %}selected{% endif %}>Rechazada</option>
             </select>
         </div>
-        <div class="col-md-4"><button class="btn btn-primary">Filtrar</button> <a href="/logout" class="btn btn-secondary">Cerrar sesión</a></div>
+        <div class="col-md-4"><button class="btn btn-primary">Filtrar</button></div>
     </form>
     <table class="table table-bordered table-striped">
-        <thead><tr><th>ID</th><th>Nombre</th><th>Proyecto</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <thead><tr><th>ID</th><th>Solicitante</th><th>Proyecto</th><th>Estado</th><th>Acciones</th></tr></thead>
         <tbody>
         {% for s in solicitudes %}
             <tr>
