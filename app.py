@@ -26,7 +26,10 @@ def login():
         if user:
             session['usuario'] = user['nombre_usuario']
             session['rol'] = user['rol']
-            return redirect('/solicitud' if user['rol'] == 'solicitante' else '/admin')
+            if user['rol'] == 'solicitante':
+                return redirect('/solicitud')
+            else:
+                return redirect('/admin')
         else:
             error = 'Credenciales incorrectas'
     return render_template('login.html', error=error)
@@ -41,23 +44,30 @@ def solicitud():
     if 'usuario' not in session or session['rol'] != 'solicitante':
         return redirect('/login')
     if request.method == 'POST':
-        data = (
-            request.form['sede'],
-            request.form['fecha'],
-            session['usuario'],
-            request.form['proceso'],
-            request.form['descripcion'],
-            request.form['proyecto'],
-            request.form['monto'],
-            request.form['prioridad'],
-            request.form['proveedor'],
-            request.form['justificacion'],
-            'pendiente',
-            datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        )
+        # Obtener los datos del formulario de la solicitud
+        sede = request.form.get('sede')
+        fecha = request.form.get('fecha')
+        proceso = request.form.get('proceso')
+        proyecto = request.form.get('proyecto')
+        prioridad = request.form.get('prioridad')
+        justificacion = request.form.get('justificacion')
+        proveedor = request.form.get('proveedor')
+
+        # Obtener los datos de los artículos
+        descripciones = request.form.getlist('descripcion_articulo[]')
+        cantidades = request.form.getlist('cantidad_articulo[]')
+        precios = request.form.getlist('precio_articulo[]')
+
+        monto_total = sum(float(p) * int(c) for p, c in zip(precios, cantidades) if p and c)
+        descripcion_completa = ''
+        for d, c, p in zip(descripciones, cantidades, precios):
+            descripcion_completa += f'Descripción: {d}, Cantidad: {c}, Precio: {p}\n'
+
         conn = get_db_connection()
-        conn.execute('''INSERT INTO solicitudes (sede, fecha, nombre, proceso, descripcion, proyecto, monto, prioridad, proveedor, justificacion, estado, fecha_creacion)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', data)
+        conn.execute('''INSERT INTO solicitudes 
+                        (sede, fecha, nombre, proceso, descripcion, proyecto, monto, prioridad, proveedor, justificacion, estado, fecha_creacion)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', 
+                        (sede, fecha, session['usuario'], proceso, descripcion_completa, proyecto, monto_total, prioridad, proveedor, justificacion, 'pendiente', datetime.now()))
         conn.commit()
         conn.close()
         return redirect('/solicitud')
@@ -92,6 +102,63 @@ def cambiar_estado(id, nuevo_estado):
     conn.close()
     return redirect('/admin')
 
-if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=10000)
+@app.route('/admin/usuarios', methods=['GET'])
+def gestionar_usuarios():
+    if 'usuario' not in session or session['rol'] != 'administrador':
+        return redirect('/login')
+    conn = get_db_connection()
+    usuarios = conn.execute('SELECT * FROM usuarios').fetchall()
+    conn.close()
+    return render_template('gestionar_usuarios.html', usuarios=usuarios)
 
+@app.route('/admin/crear_usuario', methods=['GET', 'POST'])
+def crear_usuario():
+    if 'usuario' not in session or session['rol'] != 'administrador':
+        return redirect('/login')
+    if request.method == 'POST':
+        nombre_usuario = request.form['nombre_usuario']
+        contrasena = request.form['contrasena']
+        rol = request.form['rol']
+        conn = get_db_connection()
+        try:
+            conn.execute("INSERT INTO usuarios (nombre_usuario, contrasena, rol) VALUES (?, ?, ?)", (nombre_usuario, contrasena, rol))
+            conn.commit()
+        except sqlite3.IntegrityError:
+            # Handle case where user already exists
+            pass
+        finally:
+            conn.close()
+        return redirect('/admin/usuarios')
+    return render_template('crear_usuario.html')
+
+@app.route('/admin/editar_usuario/<int:id>', methods=['GET', 'POST'])
+def editar_usuario(id):
+    if 'usuario' not in session or session['rol'] != 'administrador':
+        return redirect('/login')
+    conn = get_db_connection()
+    if request.method == 'POST':
+        nombre_usuario = request.form['nombre_usuario']
+        rol = request.form['rol']
+        conn.execute("UPDATE usuarios SET nombre_usuario = ?, rol = ? WHERE id = ?", (nombre_usuario, rol, id))
+        conn.commit()
+        conn.close()
+        return redirect('/admin/usuarios')
+    
+    usuario = conn.execute('SELECT * FROM usuarios WHERE id = ?', (id,)).fetchone()
+    conn.close()
+    if usuario is None:
+        return 'Usuario no encontrado', 404
+    return render_template('editar_usuario.html', usuario=usuario)
+
+@app.route('/admin/eliminar_usuario/<int:id>')
+def eliminar_usuario(id):
+    if 'usuario' not in session or session['rol'] != 'administrador':
+        return redirect('/login')
+    conn = get_db_connection()
+    conn.execute("DELETE FROM usuarios WHERE id = ?", (id,))
+    conn.commit()
+    conn.close()
+    return redirect('/admin/usuarios')
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
