@@ -44,30 +44,23 @@ def solicitud():
     if 'usuario' not in session or session['rol'] != 'solicitante':
         return redirect('/login')
     if request.method == 'POST':
-        # Obtener los datos del formulario de la solicitud
-        sede = request.form.get('sede')
-        fecha = request.form.get('fecha')
-        proceso = request.form.get('proceso')
-        proyecto = request.form.get('proyecto')
-        prioridad = request.form.get('prioridad')
-        justificacion = request.form.get('justificacion')
-        proveedor = request.form.get('proveedor')
-
-        # Obtener los datos de los artículos
-        descripciones = request.form.getlist('descripcion_articulo[]')
-        cantidades = request.form.getlist('cantidad_articulo[]')
-        precios = request.form.getlist('precio_articulo[]')
-
-        monto_total = sum(float(p) * int(c) for p, c in zip(precios, cantidades) if p and c)
-        descripcion_completa = ''
-        for d, c, p in zip(descripciones, cantidades, precios):
-            descripcion_completa += f'Descripción: {d}, Cantidad: {c}, Precio: {p}\n'
-
+        data = (
+            request.form['sede'],
+            request.form['fecha'],
+            session['usuario'],
+            request.form['proceso'],
+            request.form['descripcion'],
+            request.form['proyecto'],
+            request.form['monto'],
+            request.form['prioridad'],
+            request.form['proveedor'],
+            request.form['justificacion'],
+            'pendiente',
+            datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        )
         conn = get_db_connection()
-        conn.execute('''INSERT INTO solicitudes 
-                        (sede, fecha, nombre, proceso, descripcion, proyecto, monto, prioridad, proveedor, justificacion, estado, fecha_creacion)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', 
-                        (sede, fecha, session['usuario'], proceso, descripcion_completa, proyecto, monto_total, prioridad, proveedor, justificacion, 'pendiente', datetime.now()))
+        conn.execute('''INSERT INTO solicitudes (sede, fecha, nombre, proceso, descripcion, proyecto, monto, prioridad, proveedor, justificacion, estado, fecha_creacion)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', data)
         conn.commit()
         conn.close()
         return redirect('/solicitud')
