@@ -72,7 +72,6 @@ def solicitud():
         conn.close()
         return redirect('/solicitud')
     return render_template('solicitud.html')
-
 @app.route('/admin', methods=['GET'])
 def admin():
     if 'usuario' not in session or session['rol'] not in ['aprobador', 'administrador']:
