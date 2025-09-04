@@ -48,24 +48,49 @@
 <body>
     <h1>Nueva Solicitud</h1>
     <form method="POST">
+        <!-- SEDE -->
         <label for="sede">Sede:</label>
-        <input type="text" name="sede" required>
+        <select name="sede" required>
+            <option value="">Seleccione una sede</option>
+            <option value="Bogotá">Bogotá</option>
+            <option value="Medellín">Medellín</option>
+            <option value="Barranquilla">Barranquilla</option>
+            <option value="Cali">Cali</option>
+        </select>
 
+        <!-- FECHA -->
         <label for="fecha">Fecha:</label>
         <input type="date" name="fecha" required>
 
+        <!-- PROCESO -->
         <label for="proceso">Proceso:</label>
-        <input type="text" name="proceso" required>
+        <select name="proceso" required>
+            <option value="">Seleccione un proceso</option>
+            <option value="Compras">Compras</option>
+            <option value="Logística">Logística</option>
+            <option value="Financiero">Financiero</option>
+            <option value="Recursos Humanos">Recursos Humanos</option>
+        </select>
 
+        <!-- DESCRIPCIÓN -->
         <label for="descripcion">Descripción:</label>
         <textarea name="descripcion" rows="3" required></textarea>
 
+        <!-- PROYECTO -->
         <label for="proyecto">Proyecto:</label>
-        <input type="text" name="proyecto">
+        <select name="proyecto">
+            <option value="">Seleccione un proyecto</option>
+            <option value="Infraestructura">Infraestructura</option>
+            <option value="Tecnología">Tecnología</option>
+            <option value="Capacitación">Capacitación</option>
+            <option value="Operaciones">Operaciones</option>
+        </select>
 
+        <!-- MONTO -->
         <label for="monto">Monto:</label>
         <input type="number" name="monto" step="0.01">
 
+        <!-- PRIORIDAD -->
         <label for="prioridad">Prioridad:</label>
         <select name="prioridad" required>
             <option value="alta">Alta</option>
@@ -73,9 +98,11 @@
             <option value="baja">Baja</option>
         </select>
 
+        <!-- PROVEEDOR -->
         <label for="proveedor">Proveedor:</label>
         <input type="text" name="proveedor">
 
+        <!-- JUSTIFICACIÓN -->
         <label for="justificacion">Justificación:</label>
         <textarea name="justificacion" rows="3"></textarea>
 
