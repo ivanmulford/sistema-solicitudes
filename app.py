@@ -62,7 +62,7 @@ def solicitud():
     cursor = conn.cursor()
 
     if request.method == 'POST':
-        # Insertar la solicitud principal
+        # Guardar solicitud
         data = (
             request.form['sede'],
             request.form['fecha'],
@@ -81,9 +81,26 @@ def solicitud():
             (sede, fecha, nombre, proceso, descripcion, proyecto, monto, prioridad, proveedor, justificacion, estado, fecha_creacion)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', data)
 
-        solicitud_id = cursor.lastrowid  # ID de la solicitud recién creada
+        solicitud_id = cursor.lastrowid
 
-        # Insertar ítems de l
+        # Guardar ítems
+        cantidades = request.form.getlist('cantidad[]')
+        descripciones = request.form.getlist('item_descripcion[]')
+        for cant, desc in zip(cantidades, descripciones):
+            cursor.execute('INSERT INTO items_solicitud (solicitud_id, cantidad, descripcion) VALUES (?, ?, ?)',
+                           (solicitud_id, cant, desc))
+
+        conn.commit()
+
+    # Obtener solicitudes del usuario
+    solicitudes = cursor.execute(
+        'SELECT * FROM solicitudes WHERE nombre = ? ORDER BY fecha_creacion DESC',
+        (session['usuario'],)
+    ).fetchall()
+
+    conn.close()
+    return render_template('solicitud.html', solicitudes=solicitudes)
+
 
 
 @app.route('/admin', methods=['GET'])
