@@ -57,7 +57,12 @@ def logout():
 def solicitud():
     if 'usuario' not in session or session['rol'] != 'solicitante':
         return redirect('/login')
+
     if request.method == 'POST':
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Insertar la solicitud principal
         data = (
             request.form['sede'],
             request.form['fecha'],
@@ -72,13 +77,26 @@ def solicitud():
             'pendiente',
             datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         )
-        conn = get_db_connection()
-        conn.execute('''INSERT INTO solicitudes (sede, fecha, nombre, proceso, descripcion, proyecto, monto, prioridad, proveedor, justificacion, estado, fecha_creacion)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', data)
+        cursor.execute('''INSERT INTO solicitudes 
+            (sede, fecha, nombre, proceso, descripcion, proyecto, monto, prioridad, proveedor, justificacion, estado, fecha_creacion)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', data)
+
+        solicitud_id = cursor.lastrowid  # ID de la solicitud recién insertada
+
+        # Insertar los ítems asociados
+        cantidades = request.form.getlist('cantidad[]')
+        descripciones = request.form.getlist('item_descripcion[]')
+
+        for cant, desc in zip(cantidades, descripciones):
+            cursor.execute('''INSERT INTO items_solicitud (solicitud_id, cantidad, descripcion)
+                              VALUES (?, ?, ?)''', (solicitud_id, cant, desc))
+
         conn.commit()
         conn.close()
         return redirect('/solicitud')
+
     return render_template('solicitud.html')
+
 @app.route('/admin', methods=['GET'])
 def admin():
     if 'usuario' not in session or session['rol'] not in ['aprobador', 'administrador']:
