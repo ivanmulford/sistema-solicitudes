@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Solicitud de Compras</title>
-   <a href="{{ url_for('logout') }}" style="float: right; padding: 8px 12px; background: #dc3545; color: white; text-decoration: none; border-radius: 5px;">
-    Cerrar sesión
-</a>
-       <style>
+    <style>
         body {
             font-family: Arial, sans-serif;
             margin: 30px;
@@ -21,6 +18,7 @@
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             max-width: 800px;
+            margin-bottom: 40px;
         }
         label {
             display: block;
@@ -70,10 +68,23 @@
         .btn-remove:hover {
             background: #a71d2a;
         }
+        .logout-btn {
+            float: right;
+            padding: 8px 12px;
+            background: #dc3545;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .logout-btn:hover {
+            background: #a71d2a;
+        }
     </style>
-     
 </head>
 <body>
+    <!-- 🔹 Botón de cerrar sesión -->
+    <a href="{{ url_for('logout') }}" class="logout-btn">Cerrar sesión</a>
+
     <h1>Nueva Solicitud</h1>
     <form method="POST">
         <!-- SEDE -->
@@ -96,7 +107,7 @@
             <option value="">Seleccione un proceso</option>
             <option value="Compras">Compras</option>
             <option value="Hogares Sustitutos">Hogares Sustitutos</option>
-            <option value="Intervencion y Apoyo">Intervencion y Apoyo</option>
+            <option value="Intervencion y Apoyo">Intervención y Apoyo</option>
             <option value="Recursos Humanos">Recursos Humanos</option>
         </select>
 
@@ -158,6 +169,33 @@
         <button type="submit">Enviar Solicitud</button>
     </form>
 
+    <!-- 🔹 Tabla de solicitudes enviadas -->
+    <h2>Mis Solicitudes</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Descripción</th>
+                <th>Proyecto</th>
+                <th>Monto</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sol in solicitudes %}
+            <tr>
+                <td>{{ sol.id }}</td>
+                <td>{{ sol.fecha }}</td>
+                <td>{{ sol.descripcion }}</td>
+                <td>{{ sol.proyecto }}</td>
+                <td>{{ sol.monto }}</td>
+                <td>{{ sol.estado }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
     <script>
         function agregarFila() {
             const tabla = document.getElementById("tabla-items").getElementsByTagName('tbody')[0];
@@ -176,4 +214,3 @@
     </script>
 </body>
 </html>
-
