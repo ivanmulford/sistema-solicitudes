@@ -19,6 +19,11 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
+# Rutas de tu aplicación
+@app.route('/')
+def index():
+    return redirect('/login')
+
 @app.route('/')
 def index():
     return redirect('/login')
