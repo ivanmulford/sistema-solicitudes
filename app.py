@@ -5,6 +5,15 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = 'secret_key'
 
+# 👇 Importamos el script de inicialización
+from init_db import init_db  
+
+app = Flask(__name__)
+app.secret_key = 'secret_key'
+
+# 👇 Ejecutamos la inicialización de la BD apenas arranque la app
+init_db()  
+
 def get_db_connection():
     conn = sqlite3.connect('solicitudes.db')
     conn.row_factory = sqlite3.Row
